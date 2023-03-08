@@ -616,8 +616,8 @@ public class NowPlayingFragment extends SubsonicFragment implements OnGestureLis
 			case R.id.menu_lyrics: {
 				SubsonicFragment fragment = new LyricsFragment();
 				Bundle args = new Bundle();
-				args.putString(Constants.INTENT_EXTRA_NAME_ARTIST, song.getSong().getArtist());
-				args.putString(Constants.INTENT_EXTRA_NAME_TITLE, song.getSong().getTitle());
+				args.putString(Constants.INTENT_EXTRA_NAME_ARTIST, currentPlaying.getSong().getArtist());
+				args.putString(Constants.INTENT_EXTRA_NAME_TITLE, currentPlaying.getSong().getTitle());
 				fragment.setArguments(args);
 
 				replaceFragment(fragment);

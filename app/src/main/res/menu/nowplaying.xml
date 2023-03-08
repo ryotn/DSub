@@ -3,7 +3,7 @@
 	  xmlns:compat="http://schemas.android.com/apk/res-auto"
 	  android:checkableBehavior="all">
 
-    <item
+	<item
         android:id="@+id/menu_shuffle"
         android:icon="?attr/shuffle"
         android:title="@string/download.menu_shuffle"
@@ -22,7 +22,14 @@
         android:title="@string/download.menu_remove_all"
         compat:showAsAction="ifRoom|withText"/>
 
-    <item
+	<item
+		android:id="@+id/menu_lyrics"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:icon="@drawable/action_toggle_list_dark"
+		android:title="@string/download.menu_lyrics"
+		compat:showAsAction="ifRoom|withText" />
+	<item
         android:id="@+id/menu_save_playlist"
         android:icon="?attr/save"
         android:title="@string/download.menu_save"

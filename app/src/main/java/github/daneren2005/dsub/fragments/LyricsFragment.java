@@ -20,12 +20,20 @@
 package github.daneren2005.dsub.fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.List;
+
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.domain.Lyrics;
+import github.daneren2005.dsub.domain.MusicDirectory;
+import github.daneren2005.dsub.domain.PlayerState;
+import github.daneren2005.dsub.service.DownloadFile;
+import github.daneren2005.dsub.service.DownloadService;
 import github.daneren2005.dsub.service.MusicService;
 import github.daneren2005.dsub.service.MusicServiceFactory;
 import github.daneren2005.dsub.util.BackgroundTask;
@@ -37,12 +45,15 @@ import github.daneren2005.dsub.util.TabBackgroundTask;
  *
  * @author Sindre Mehus
  */
-public final class LyricsFragment extends SubsonicFragment {
+public final class LyricsFragment extends SubsonicFragment implements DownloadService.OnSongChangedListener {
+	private static final String TAG = "LyricsFragment";
 	private TextView artistView;
 	private TextView titleView;
 	private TextView textView;
 
 	private Lyrics lyrics;
+
+	private DownloadService downloadService;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -68,8 +79,14 @@ public final class LyricsFragment extends SubsonicFragment {
 		titleView = (TextView) rootView.findViewById(R.id.lyrics_title);
 		textView = (TextView) rootView.findViewById(R.id.lyrics_text);
 
+		downloadService = getDownloadService();
+		downloadService.addOnSongChangedListener(this, true);
+
+		String artist = getArguments().getString(Constants.INTENT_EXTRA_NAME_ARTIST);
+		String title = getArguments().getString(Constants.INTENT_EXTRA_NAME_TITLE);
+
 		if(lyrics == null) {
-			load();
+			load(artist, title);
 		} else {
 			setLyrics();
 		}
@@ -77,12 +94,16 @@ public final class LyricsFragment extends SubsonicFragment {
 		return rootView;
 	}
 
-	private void load() {
+	@Override
+	public void onDestroy() {
+		downloadService.removeOnSongChangeListener(this);
+		super.onDestroy();
+	}
+
+	private void load(final String artist, final String title) {
 		BackgroundTask<Lyrics> task = new TabBackgroundTask<Lyrics>(this) {
 			@Override
 			protected Lyrics doInBackground() throws Throwable {
-				String artist = getArguments().getString(Constants.INTENT_EXTRA_NAME_ARTIST);
-				String title = getArguments().getString(Constants.INTENT_EXTRA_NAME_TITLE);
 				MusicService musicService = MusicServiceFactory.getMusicService(context);
 				return musicService.getLyrics(artist, title, context, this);
 			}
@@ -104,5 +125,35 @@ public final class LyricsFragment extends SubsonicFragment {
 		} else {
 			artistView.setText(R.string.lyrics_nomatch);
 		}
+	}
+
+	@Override
+	public void onSongChanged(final DownloadFile currentPlaying, int currentPlayingIndex, boolean shouldFastForward) {
+		Log.d(TAG, "onSongChanged");
+
+		String artist = currentPlaying.getSong().getArtist();
+		String title = currentPlaying.getSong().getTitle();
+
+		load(artist, title);
+	}
+
+	@Override
+	public void onSongsChanged(List<DownloadFile> songs, DownloadFile currentPlaying, int currentPlayingIndex, boolean shouldFastForward) {
+		Log.d(TAG, "onSongsChanged");
+	}
+
+	@Override
+	public void onSongProgress(DownloadFile currentPlaying, int millisPlayed, Integer duration, boolean isSeekable) {
+
+	}
+
+	@Override
+	public void onStateUpdate(DownloadFile downloadFile, PlayerState playerState) {
+
+	}
+
+	@Override
+	public void onMetadataUpdate(MusicDirectory.Entry entry, int fieldChange) {
+
 	}
 }

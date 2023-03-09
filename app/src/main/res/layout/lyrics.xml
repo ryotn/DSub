@@ -17,7 +17,7 @@
 			android:layout_height="fill_parent">
 
 			<TextView
-				android:id="@+id/lyrics_artist"
+				android:id="@+id/lyrics_title"
 				android:textAppearance="?android:attr/textAppearanceMedium"
 				android:gravity="center_horizontal"
 				android:layout_width="fill_parent"
@@ -29,7 +29,7 @@
 				android:textColor="?android:textColorPrimary"/>
 
 			<TextView
-				android:id="@+id/lyrics_title"
+				android:id="@+id/lyrics_artist"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:gravity="center_horizontal"
 				android:layout_width="fill_parent"
